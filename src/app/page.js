@@ -237,8 +237,6 @@ export default function App() {
 };
 
   const sendToTelegram = async () => {
-    const endpoint = file ? 'sendPhoto' : 'sendMessage';
-    const url = `https://api.telegram.org/bot${process.env.NEXT_PUBLIC_BOT_TOKEN}/${endpoint}`;
     const timestamp = new Date().toLocaleString();
     
     // const formattedText = `<b>🚨 NEW ORDER</b>\n\n<b>Subject:</b> ${subject}\n<b>Time:</b> ${timestamp}\n\n<b>Message:</b>\n${message}`;
@@ -256,28 +254,20 @@ export default function App() {
     <b>Shipping fee: $${shippingFee.toFixed(2)}</b>
     <b>Payment Method: ${paymentMethod}</b>`;
 
-    let body;
-    let headers = {};
+    const formData = new FormData();
+    formData.append("message", formattedText);
 
     if (file) {
-      body = new FormData();
-      body.append('chat_id', process.env.NEXT_PUBLIC_CHAT_ID);
-      body.append('photo', file);
-      body.append('caption', formattedText);
-      body.append('parse_mode', 'HTML');
-    } else {
-      headers['Content-Type'] = 'application/json';
-      body = JSON.stringify({
-        chat_id: process.env.NEXT_PUBLIC_CHAT_ID,
-        text: formattedText,
-        parse_mode: 'HTML'
-      });
+    formData.append("file", file);
     }
 
-    const response = await fetch(url, { method: 'POST', headers, body });
+    const response = await fetch("/api/order", {
+    method: "POST",
+    body: formData,
+    });
+
     if (!response.ok) {
-      const res = await response.json();
-      throw new Error(res.description || "Telegram API Error");
+    throw new Error("Failed to send order");
     }
   };
 

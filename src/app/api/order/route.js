@@ -1,33 +1,47 @@
-// app/api/order/route.js
-import { NextResponse } from 'next/server';
+export async function POST(req) {
 
-export async function POST(request) {
-  const formData = await request.formData();
-  
-  const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-  const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-  
-  const message = formData.get('message');
-  const photo = formData.get('photo');
-
+  if (!process.env.TELEGRAM_BOT_TOKEN) {
+    return Response.json({ error: "Server misconfigured" }, { status: 500 });
+  }
   try {
-    // 1. Send text details
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text: message }),
-    });
+    const formData = await req.formData();
 
-    // 2. Send Photo if it exists
-    if (photo && photo !== "null") {
-      const tgFormData = new FormData();
-      tgFormData.append('chat_id', CHAT_ID);
-      tgFormData.append('photo', photo);
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, tgFormData);
+    const file = formData.get("file");
+    const message = formData.get("message");
+
+    const endpoint = file ? "sendPhoto" : "sendMessage";
+
+    const telegramForm = new FormData();
+    telegramForm.append("chat_id", process.env.TELEGRAM_CHAT_ID);
+
+    if (file) {
+      telegramForm.append("photo", file);
+      telegramForm.append("caption", message);
+      telegramForm.append("parse_mode", "HTML");
+    } else {
+      telegramForm.append("text", message);
+      telegramForm.append("parse_mode", "HTML");
     }
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ success: false }, { status: 500 });
+    const response = await fetch(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${endpoint}`,
+      {
+        method: "POST",
+        body: telegramForm,
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log("Telegram error:", data);
+      return Response.json({ error: data }, { status: 500 });
+    }
+
+    return Response.json({ success: true });
+
+  } catch (err) {
+    console.error("SERVER ERROR:", err);
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
