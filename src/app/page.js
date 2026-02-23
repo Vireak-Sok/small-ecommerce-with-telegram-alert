@@ -195,7 +195,7 @@ export default function App() {
 
   const ShowOrderResult = ({ status }) => {
     return(
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+      <div className="fixed h-full inset-0 z-[100] flex items-center justify-center bg-black/50">
       {/* Modal Box */}
       <div className="bg-white p-8 rounded-lg shadow-xl flex flex-col items-center gap-2">
         {status === 'success' ? (
@@ -313,7 +313,7 @@ useEffect(() => {
   return (
     <div className="min-h-screen bg-slate-50 pb-56 font-sans text-slate-900 leading-relaxed">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b bg-white/95 p-4 backdrop-blur-md shadow-sm">
+      <header className="sticky top-0 z-40 border-b bg-white/95 px-4 py-2 backdrop-blur-md shadow-sm">
         <div className="mx-auto flex max-w-md items-center justify-between">
           <button onClick={() => setStep(step - 1)} className={`p-1 hover:bg-slate-100 rounded-full transition-colors ${step > 1 ? '' : 'invisible'}`}>
             <ArrowLeft size={24}/>
@@ -388,7 +388,7 @@ useEffect(() => {
 
       <main className="mx-auto max-w-md p-4 pt-6">
         {/* Stepper */}
-        <div className="mb-8 flex items-center justify-center gap-2">
+        <div className="mb-4 flex items-center justify-center gap-2">
           {[1, 2, 3].map(i => (
             <React.Fragment key={i}>
               <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${step >= i ? 'bg-blue-600 text-white scale-110 shadow-lg shadow-blue-100' : 'bg-slate-200 text-slate-500'}`}>
@@ -439,13 +439,13 @@ useEffect(() => {
           <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
             <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
             <div className="space-y-4">
-              <input type="text" placeholder="ឈ្មោះអ្នកទទួល" className="w-full rounded-xl border border-slate-200 p-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
-              <input type="tel" placeholder="លេខទូរស័ព្ទ" className="w-full rounded-xl border border-slate-200 p-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.phone} onChange={e => setCustomer({...customer, phone: e.target.value})} />
+              <input type="text" placeholder="ឈ្មោះអ្នកទទួល" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
+              <input type="tel" placeholder="លេខទូរស័ព្ទ" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.phone} onChange={e => setCustomer({...customer, phone: e.target.value})} />
               
               <div className="space-y-3">
                 <div className="relative">
-                  <MapPin className="absolute left-4 top-4 text-slate-400" size={20} />
-                  <select className="w-full rounded-xl border border-slate-200 bg-white py-4 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" value={customer.province} onChange={e => setCustomer({...customer, province: e.target.value})}>
+                  <MapPin className="absolute left-4 top-3 text-slate-400" size={20} />
+                  <select className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" value={customer.province} onChange={e => setCustomer({...customer, province: e.target.value})}>
                     <option value="">ជ្រើសរើស ខេត្ត/ក្រុង</option>
                     {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
                   </select>
@@ -465,7 +465,7 @@ useEffect(() => {
                 )}
               </div>
 
-              <textarea placeholder="អាសយដ្ឋានលម្អិត (លេខផ្ទះ, ផ្លូវ, ភូមិ...)" rows="3" className="w-full rounded-xl border border-slate-200 p-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.address} onChange={e => setCustomer({...customer, address: e.target.value})} />
+              <textarea placeholder="អាសយដ្ឋានលម្អិត (លេខផ្ទះ, ផ្លូវ, ភូមិ...)" rows="3" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.address} onChange={e => setCustomer({...customer, address: e.target.value})} />
             </div>
           </div>
         )}
@@ -475,11 +475,11 @@ useEffect(() => {
             {status != null && <ShowOrderResult status={status} />}
             <h2 className="text-2xl font-extrabold tracking-tight text-center">របៀបបង់ប្រាក់</h2>
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => setPaymentMethod('QR')} className={`flex flex-col items-center justify-center gap-2 rounded-2xl border-2 p-5 transition-all ${paymentMethod === 'QR' ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md scale-105' : 'border-slate-100 bg-white text-slate-500'}`}><CreditCard size={28} /><span className="text-[11px] font-black uppercase">បង់តាម QR</span></button>
+              <button onClick={() => setPaymentMethod('QR')} className={`flex flex-col items-center justify-center rounded-2xl border-2 p-2 transition-all ${paymentMethod === 'QR' ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md scale-105' : 'border-slate-100 bg-white text-slate-500'}`}><CreditCard size={28} /><span className="text-[11px] font-black uppercase">បង់តាម QR</span></button>
               {(customer.province === "ភ្នំពេញ" || customer.province === "Phnom Penh") ? (
-                <button onClick={() => setPaymentMethod('COD')} className={`flex flex-col items-center justify-center gap-2 rounded-2xl border-2 p-5 transition-all ${paymentMethod === 'COD' ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md scale-105' : 'border-slate-100 bg-white text-slate-500'}`}><Banknote size={28} /><span className="text-[11px] font-black uppercase">បង់ពេលទំនិញមកដល់</span></button>
+                <button onClick={() => setPaymentMethod('COD')} className={`flex flex-col items-center justify-center rounded-2xl border-2 p-2 transition-all ${paymentMethod === 'COD' ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md scale-105' : 'border-slate-100 bg-white text-slate-500'}`}><Banknote size={28} /><span className="text-[11px] font-black uppercase">បង់ពេលទំនិញមកដល់</span></button>
               ) : (
-                <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 p-5 text-slate-300"><Banknote size={28} /><span className="text-[9px] font-bold uppercase text-center leading-tight">មិនមានសេវា COD <br/> សម្រាប់ខេត្ត</span></div>
+                <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 p-2 text-slate-300"><Banknote size={28} /><span className="text-[9px] font-bold uppercase text-center leading-tight">មិនមានសេវា COD <br/> សម្រាប់ខេត្ត</span></div>
               )}
             </div>
 
@@ -554,8 +554,8 @@ useEffect(() => {
       </main>
 
       {/* Floating Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-10 duration-500">
-        <div className="mx-auto w-full bg-white border-t border-slate-100 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] pt-5 pb-8 px-4 sm:px-6">
+      <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-10 duration-500 bg-white">
+        <div className="mx-auto w-full border-t border-slate-100 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] py-4 px-4">
            <div className="max-w-md mx-auto space-y-4">
              {/* Dynamic Total/Shipping Breakdown */}
              {step !== 3 && (
@@ -587,21 +587,20 @@ useEffect(() => {
 
              <div>
                {step < 3 ? (
-                 <button onClick={handleNext} disabled={step === 1 || subtotal == 0 ? subtotal === 0 : (!customer.name || !customer.phone || !customer.province || !customer.address)} className="flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-lg font-black text-white shadow-xl shadow-blue-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all">
+                 <button onClick={handleNext} disabled={step === 1 || subtotal == 0 ? subtotal === 0 : (!customer.name || !customer.phone || !customer.province || !customer.address)} className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-2 text-lg font-black text-white shadow-xl shadow-blue-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all">
                    {step === 1 ? 'បន្តទៅកាន់ការដឹកជញ្ជូន' : 'បន្តទៅកាន់ការបង់ប្រាក់'}
-                   {step === 1 ? <Package size={20} /> : <User size={20} />}
                  </button>
                ) : (
                 <button 
                   onClick={handleManualSubmit}
                   disabled={subtotal == 0 || isSubmitting || file == null && paymentMethod != 'COD' ? true: false}
-                  className="flex w-full items-center justify-center gap-3 rounded-2xl bg-green-500 py-5 text-lg font-black text-white shadow-xl shadow-green-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all"
+                  className="flex w-full items-center justify-center gap-3 rounded-xl bg-green-500 py-2 text-lg font-black text-white shadow-xl shadow-green-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all"
                 >
                   {isSubmitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      <Send size={20}/>បញ្ជាក់ការកម្ម៉ង់
+                      បញ្ជាក់ការកម្ម៉ង់
                     </>
                   )}
                 </button>
