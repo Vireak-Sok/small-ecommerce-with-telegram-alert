@@ -237,6 +237,7 @@ export default function App() {
 };
 
   const sendToTelegram = async () => {
+    console.log("Preparing to send order to Telegram...");
     const timestamp = new Date().toLocaleString();
     
     // const formattedText = `<b>🚨 NEW ORDER</b>\n\n<b>Subject:</b> ${subject}\n<b>Time:</b> ${timestamp}\n\n<b>Message:</b>\n${message}`;
@@ -260,6 +261,8 @@ export default function App() {
     if (file) {
     formData.append("file", file);
     }
+
+    console.log({formData})
 
     const response = await fetch("/api/order", {
     method: "POST",

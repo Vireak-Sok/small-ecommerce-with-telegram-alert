@@ -3,6 +3,7 @@ export async function POST(req) {
   if (!process.env.TELEGRAM_BOT_TOKEN) {
     return Response.json({ error: "Server misconfigured" }, { status: 500 });
   }
+  
   try {
     const formData = await req.formData();
 
