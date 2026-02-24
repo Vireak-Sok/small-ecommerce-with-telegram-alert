@@ -4,6 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, CheckCircle, Package, User, MapPin, Send, ArrowLeft, CreditCard, Banknote, Truck, Wind, Droplets, Scissors, Eraser, Briefcase, Star, Gift, Layers, LayoutGrid, Sparkles, X, Trash2, Info, CloudDownload, ImageUp, AlertCircle, Loader2, CircleX } from 'lucide-react';
 import qrImage from '../assets/image.png';
 import Image from 'next/image';
+import { getProducts } from '@/lib/googleSheets';
+import ProductDisplay from '@/components/ProductDisplay';
+
+export const revalidate = 600; // Refresh data every 10 minutes
+
+const products = await getProducts();
+  // Get unique types for the tabs
+const types = [...new Set(products.map(p => p.type))]
 
 const MAIN_PRODUCTS = [
   { 
@@ -401,6 +409,7 @@ useEffect(() => {
 
         {step === 1 && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <ProductDisplay initialProducts={products} types={types} />
             {/* Tab Navigation */}
             <div className="flex p-1 bg-slate-200/50 rounded-2xl gap-1">
                <button onClick={() => setActiveTab('combos')} className={`flex-1 py-3 rounded-xl text-[11px] font-black transition-all ${activeTab === 'combos' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500'}`}>ទំនិញជាឈុត</button>
