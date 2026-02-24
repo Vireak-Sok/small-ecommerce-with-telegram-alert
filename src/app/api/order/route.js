@@ -24,6 +24,8 @@ export async function POST(req) {
       telegramForm.append("parse_mode", "HTML");
     }
 
+    console.log(process.env.TELEGRAM_CHAT_ID, process.env.TELEGRAM_BOT_TOKEN);
+    
     const response = await fetch(
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${endpoint}`,
       {
