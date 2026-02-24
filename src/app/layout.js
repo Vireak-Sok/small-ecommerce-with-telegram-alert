@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "72Shoes",
+  title: "E-menu | 72 Shoes",
   description: "72Shoes - Online Ordering System",
 };
 
