@@ -86,11 +86,11 @@ const STORE_NAME = "72 SHOES";
 const CURRENCY = " KHR";
 
 export default async function App() {
-  const products = await getProducts().filter(p => p.active === true); // This runs on the server (Safe)
+  const products = await getProducts(); // This runs on the server (Safe)
 
-  const MAIN_PRODUCTS = products.filter(p => p.type === 'base');
-  const ADDITIONAL_PRODUCTS = products.filter(p => p.type === 'add-on');
-  const COMBOS = products.filter(p => p.type === 'combo');
+  const MAIN_PRODUCTS = products.filter(p => p.type === 'base' && p.active === true);
+  const ADDITIONAL_PRODUCTS = products.filter(p => p.type === 'add-on' && p.active === true);
+  const COMBOS = products.filter(p => p.type === 'combo' && p.active === true);
   const ALL_PRODUCTS = [...MAIN_PRODUCTS, ...ADDITIONAL_PRODUCTS];
 
   return (
