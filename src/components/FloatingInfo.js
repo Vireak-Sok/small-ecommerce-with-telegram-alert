@@ -11,7 +11,7 @@ export default function FloatingSupport() {
   return (
     <>
       {/* 1. Floating Support Button */}
-      <div className="fixed bottom-40 left-4 z-50">
+      <div className="fixed max-w-md bottom-40 z-50">
         {/* The Pulse Effect (Animated Ring) */}
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span>
         

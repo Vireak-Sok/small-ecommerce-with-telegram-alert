@@ -30,6 +30,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState(null);
   const [timeLeft, setTimeLeft] = useState(5);
+  const [isRecording, setIsRecording] = useState(false);
  
   const fileInputRef = useRef(null);
 
@@ -88,6 +89,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   const total = subtotal + shippingFee;
 
   const handleNext = () => {
+    setStatus(null);
     if (step === 1 && subtotal === 0) return;
     if (step === 2 && (!customer.name || !customer.phone || !customer.province || !customer.address)) return;
     setStep(step + 1);
@@ -155,8 +157,59 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   );
 };
 
+const RecordFailed = () => {
+  return(
+      <div className="fixed h-full inset-0 z-[100] flex items-center justify-center bg-black/50">
+      {/* Modal Box */}
+      <div className="bg-white p-8 rounded-lg shadow-xl flex flex-col items-center gap-2">
+          <CircleX className="text-red-600 mx-auto" size={48} />
+          <h2 className="text-xl font-bold text-center text-red-600">Cannot record order!</h2>
+          <p className="text-slate-600">Please try again in a few minutes.</p>
+          <p className="text-slate-400 text-sm">Back to product page in {timeLeft}s</p>
+      </div>
+    </div>
+  )
+}
+
+const recordOrder = async () => {
+  setIsRecording(true);
+  const timestamp = new Date().toLocaleString();
+
+  try {
+    const res = await fetch("/api/recordOrder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        date: timestamp,
+        ...customer,
+        items: Object.entries(cart).map(([id, qty]) => `${getItemData(id)?.name} x${qty}`).join(', '),
+        total: total, // Your calculated total
+        payment: paymentMethod
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setIsRecording(false);
+      setStatus('success');
+      handleNext(); // Move to next step (e.g., show success message)
+      // Redirect to thank you page or clear cart
+    } else {
+      setIsRecording(false);
+      setStatus('error');
+    }
+  } catch (err) {
+    setIsRecording(false);
+    setStatus('error');
+  } finally {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    setStep(1);
+    setStatus(null);
+  }
+};
+
   const sendToTelegram = async () => {
-    console.log("Preparing to send order to Telegram...");
     const timestamp = new Date().toLocaleString();
     
     // formattedText for telegram message with HTML formatting
@@ -168,9 +221,10 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
     <b>Phone Number: ${customer.phone}</b>
     <b>Province: ${customer.province}</b>
     <b>Address: ${customer.address}</b>
-    <b>Remark: ${customer.remark || 'None'}</b>
 
     <b>Product: ${Object.entries(cart).map(([id, qty]) => `${getItemData(id)?.name} x${qty}`).join(', ')}</b>
+    <b>Remark: ${customer.remark || 'None'}</b>
+
     <b>Total amount: $${total.toFixed(2)}</b>
     <b>Shipping fee: $${shippingFee.toFixed(2)}</b>
     <b>Payment Method: ${paymentMethod}</b>`;
@@ -182,14 +236,10 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
     formData.append("file", file);
     }
 
-    console.log({formData})
-
     const response = await fetch("/api/order", {
     method: "POST",
     body: formData,
     });
-
-    console.log("Telegram response:", response);
 
     if (!response.ok) {
     throw new Error("Failed to send order");
@@ -197,8 +247,6 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   };
 
   const handleManualSubmit = async () => {
-
-    console.log("Manual submit triggered");
 
     setIsSubmitting(true);
 
@@ -362,6 +410,7 @@ useEffect(() => {
 
         {step === 2 && (
           <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
+            {status === 'error' && <RecordFailed />}
   <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
   
   <div className="space-y-4">
@@ -596,9 +645,19 @@ useEffect(() => {
               )}
 
              <div>
-               {step < 3 ? (
+               {step === 1 ? (
                  <button onClick={handleNext} disabled={step === 1 || subtotal == 0 ? subtotal === 0 : (!customer.name || !customer.phone || !customer.province || !customer.address)} className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-2 text-lg font-black text-white shadow-xl shadow-blue-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all">
-                   {step === 1 ? 'បន្តទៅកាន់ការដឹកជញ្ជូន' : 'បន្តទៅកាន់ការបង់ប្រាក់'}
+                   បន្តទៅកាន់ការដឹកជញ្ជូន
+                 </button>
+               ) : step === 2 ? (
+                <button onClick={recordOrder} disabled={step === 1 || subtotal == 0 ? subtotal === 0 : (!customer.name || !customer.phone || !customer.province || !customer.address)} className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-2 text-lg font-black text-white shadow-xl shadow-blue-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all">
+                   {isRecording ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      បន្តទៅកាន់ការបង់ប្រាក់
+                    </>
+                  )}
                  </button>
                ) : (
                 <button 
