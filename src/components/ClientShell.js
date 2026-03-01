@@ -123,14 +123,14 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
             <CheckCircle className="text-green-600 mx-auto" size={48} />
             <h2 className="text-xl font-bold text-center text-green-600">ការបញ្ជាទិញបានជោគជ័យ!</h2>
             <p className="text-slate-600">🙏 អរគុណសម្រាប់ការគាំទ្រ 🙏</p>
-            <p className="text-slate-400 text-sm">ត្រលប់ទៅទំព័រដើមវិញក្នុងរយះពេល {timeLeft}វិនាទី</p>
+            <p className="text-slate-400 text-sm">ត្រលប់ទៅទំព័រដើមវិញក្នុងរយៈពេល {timeLeft}វិនាទី</p>
           </div>
         ) : (
           <>
             <CircleX className="text-red-600 mx-auto" size={48} />
             <h2 className="text-xl font-bold text-center text-red-600">ការបញ្ជាទិញមិនបានជោគជ័យ!</h2>
             <p className="text-slate-600">សូមព្យាយាមម្តងទៀតពេលក្រោយ</p>
-            <p className="text-slate-400 text-sm">ត្រលប់ទៅទំព័រដើមវិញក្នុងរយះពេល {timeLeft}វិនាទី</p>
+            <p className="text-slate-400 text-sm">ត្រលប់ទៅទំព័រដើមវិញក្នុងរយៈពេល {timeLeft}វិនាទី</p>
           </>
         )}
       </div>
