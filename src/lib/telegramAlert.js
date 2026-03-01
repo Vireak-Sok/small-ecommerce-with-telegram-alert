@@ -1,21 +1,21 @@
-export async function POST(req) {;
+'use server'
 
-  // 1. Check Env Vars first
-  if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
-    return Response.json({ error: "Server environment variables missing" }, { status: 500 });
+import { revalidatePath } from 'next/cache';
+
+export async function telegramAlert(formData) {
+  
+  console.log("Received order request");
+
+  if (!process.env.TELEGRAM_BOT_TOKEN) {
+    return Response.json({ error: "Server misconfigured" }, { status: 500 });
   }
   
   try {
+    // const formData = await req.formData();
 
-    // 2. Safely parse FormData
-    const contentType = req.headers.get("content-type") || "";
-    if (!contentType.includes("multipart/form-data")) {
-      return Response.json({ error: "Invalid Content-Type. Expected multipart/form-data" }, { status: 400 });
-    }
-
-    const formData = await req.formData();
     const file = formData.get("file");
     const message = formData.get("message");
+
     const endpoint = file ? "sendPhoto" : "sendMessage";
 
     const telegramForm = new FormData();
@@ -44,6 +44,9 @@ export async function POST(req) {;
       console.log("Telegram error:", data);
       return Response.json({ error: data }, { status: 500 });
     }
+
+    // Clear the cache for the orders page
+    // revalidatePath('/orders');
 
     return Response.json({ success: true });
 

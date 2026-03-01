@@ -184,10 +184,12 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
 
     console.log({formData})
 
-    const response = await fetch("../app/api/order", {
+    const response = await fetch("/api/order", {
     method: "POST",
     body: formData,
     });
+
+    console.log("Telegram response:", response);
 
     if (!response.ok) {
     throw new Error("Failed to send order");
@@ -195,6 +197,8 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   };
 
   const handleManualSubmit = async () => {
+
+    console.log("Manual submit triggered");
 
     setIsSubmitting(true);
 
