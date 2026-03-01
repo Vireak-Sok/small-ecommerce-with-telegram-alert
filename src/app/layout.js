@@ -14,6 +14,22 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "E-menu | 72 Shoes",
   description: "72Shoes - Online Ordering System",
+  // This is what Telegram/Facebook looks for:
+  openGraph: {
+    title: "E-menu | 72 Shoes",
+    description: "ការបញ្ជាទិញទំនិញតាមអនឡាញដែលងាយស្រួលបំផុត",
+    url: 'https://72-shoes.vercel.app/',
+    siteName: '72 shoes Accessory',
+    images: [
+      {
+        url: 'https://github.com/Vireak-Sok/small-ecommerce-with-telegram-alert/blob/main/src/assets/logo.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'km_KH',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }) {
