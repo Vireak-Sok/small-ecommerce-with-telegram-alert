@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, CheckCircle, Package, User, MapPin, Send, ArrowLeft, CreditCard, Banknote, Truck, Wind, Droplets, Scissors, Eraser, Briefcase, Star, Gift, Layers, LayoutGrid, Sparkles, X, Trash2, Info, CloudDownload, ImageUp, AlertCircle, Loader2, CircleX } from 'lucide-react';
+import { ShoppingCart, CheckCircle, Package, User, MapPin, ArrowLeft, CreditCard, Banknote, Truck, Gift, Sparkles, X, CloudDownload, ImageUp, Loader2, CircleX, MessageSquare } from 'lucide-react';
 import qrImage from '../assets/image.png';
-import Image from 'next/image';
-import ProductDisplay from '@/components/ProductDisplay';
-import CartModal from '@/components/CartModal';
+import Image from 'next/image'; 
+import FloatingInfo from './FloatingInfo';
 
 export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PRODUCTS, COMBOS, PROVINCES, BUSINESS_PHONE, STORE_NAME, CURRENCY }) {
     const [cart, setCart] = useState({});
@@ -160,7 +159,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
     console.log("Preparing to send order to Telegram...");
     const timestamp = new Date().toLocaleString();
     
-    // const formattedText = `<b>🚨 NEW ORDER</b>\n\n<b>Subject:</b> ${subject}\n<b>Time:</b> ${timestamp}\n\n<b>Message:</b>\n${message}`;
+    // formattedText for telegram message with HTML formatting
     const formattedText =
     `<b>🚨 NEW ORDER</b>
     
@@ -169,6 +168,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
     <b>Phone Number: ${customer.phone}</b>
     <b>Province: ${customer.province}</b>
     <b>Address: ${customer.address}</b>
+    <b>Remark: ${customer.remark || 'None'}</b>
 
     <b>Product: ${Object.entries(cart).map(([id, qty]) => `${getItemData(id)?.name} x${qty}`).join(', ')}</b>
     <b>Total amount: $${total.toFixed(2)}</b>
@@ -212,7 +212,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
       await new Promise((resolve) => setTimeout(resolve, 5000));
       setStep(1)
       setCart({});
-      setCustomer({ name: '', phone: '', province: '', address: '' })
+      setCustomer({ name: '', phone: '', province: '', address: '', remark: '' });
       setIsSubmitting(false)
       setActiveTab('combos');
       setPaymentMethod('QR');
@@ -301,7 +301,7 @@ useEffect(() => {
               </div>
               <button 
                 onClick={() => setIsCartOpen(false)}
-                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-100 active:scale-95 transition-all"
+                className="w-full py-2 bg-blue-600 text-white rounded-xl font-black shadow-lg shadow-blue-100 active:scale-95 transition-all"
               >
                 បិទវិញ
               </button>
@@ -362,37 +362,125 @@ useEffect(() => {
 
         {step === 2 && (
           <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
-            <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
-            <div className="space-y-4">
-              <input type="text" placeholder="ឈ្មោះអ្នកទទួល" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
-              <input type="tel" placeholder="លេខទូរស័ព្ទ" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.phone} onChange={e => setCustomer({...customer, phone: e.target.value})} />
-              
-              <div className="space-y-3">
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-3 text-slate-400" size={20} />
-                  <select className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" value={customer.province} onChange={e => setCustomer({...customer, province: e.target.value})}>
-                    <option value="">ជ្រើសរើស ខេត្ត/ក្រុង</option>
-                    {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-                
-                {/* NEW: Shipping Fee Display under dropdown */}
-                {customer.province && (
-                  <div className={`flex items-center justify-between p-3 rounded-xl border animate-in fade-in slide-in-from-top-2 duration-300 ${isFreeDelivery ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'}`}>
-                    <div className="flex items-center gap-2">
-                      <Truck size={16} className={isFreeDelivery ? 'text-green-600' : 'text-blue-600'} />
-                      <span className="text-xs font-bold text-slate-600">សេវាដឹកជញ្ជូន:</span>
-                    </div>
-                    <span className={`text-sm font-black ${isFreeDelivery ? 'text-green-600' : 'text-blue-600'}`}>
-                      {isFreeDelivery ? 'ឥតគិតថ្លៃ (FREE)' : `${CURRENCY}${shippingFee.toFixed(2)}`}
-                    </span>
-                  </div>
-                )}
-              </div>
+  <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
+  
+  <div className="space-y-4">
+    {/* Recipient Name */}
+    <div className="space-y-1.5">
+      <label className="text-sm font-bold text-slate-700 ml-1">ឈ្មោះអ្នកទទួល</label>
+      <input 
+        type="text" 
+        placeholder="បញ្ចូលឈ្មោះរបស់អ្នក" 
+        className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm transition-all" 
+        value={customer.name} 
+        onChange={e => setCustomer({...customer, name: e.target.value})} 
+      />
+    </div>
 
-              <textarea placeholder="អាសយដ្ឋានលម្អិត (លេខផ្ទះ, ផ្លូវ, ភូមិ...)" rows="3" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.address} onChange={e => setCustomer({...customer, address: e.target.value})} />
-            </div>
+    {/* Phone Number */}
+    <div className="space-y-1.5">
+      <label className="text-sm font-bold text-slate-700 ml-1">លេខទូរស័ព្ទ</label>
+      <input 
+        type="tel" 
+        placeholder="ឧទាហរណ៍៖ 012 345 678" 
+        className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm transition-all" 
+        value={customer.phone} 
+        onChange={e => setCustomer({...customer, phone: e.target.value})} 
+      />
+    </div>
+    
+    {/* Province Selection */}
+    <div className="space-y-1.5">
+      <label className="text-sm font-bold text-slate-700 ml-1">ខេត្ត/ក្រុង</label>
+      <div className="relative">
+        <MapPin className="absolute left-4 top-2.5 text-slate-400" size={18} />
+        <select 
+          className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" 
+          value={customer.province} 
+          onChange={e => setCustomer({...customer, province: e.target.value})}
+        >
+          <option value="">ជ្រើសរើស ខេត្ត/ក្រុង</option>
+          {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+      </div>
+      
+      {/* Shipping Fee Display */}
+      {customer.province && (
+        <div className={`mt-2 flex items-center justify-between p-3 rounded-xl border animate-in fade-in slide-in-from-top-2 duration-300 ${isFreeDelivery ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'}`}>
+          <div className="flex items-center gap-2">
+            <Truck size={16} className={isFreeDelivery ? 'text-green-600' : 'text-blue-600'} />
+            <span className="text-xs font-bold text-slate-600">សេវាដឹកជញ្ជូន:</span>
           </div>
+          <span className={`text-sm font-black ${isFreeDelivery ? 'text-green-600' : 'text-blue-600'}`}>
+            {isFreeDelivery ? 'ឥតគិតថ្លៃ (FREE)' : `${CURRENCY}${shippingFee.toFixed(2)}`}
+          </span>
+        </div>
+      )}
+    </div>
+
+    {/* Detailed Address */}
+    <div className="space-y-1.5">
+      <label className="text-sm font-bold text-slate-700 ml-1">អាសយដ្ឋានលម្អិត</label>
+      <textarea 
+        placeholder="លេខផ្ទះ, ផ្លូវ, ភូមិ..." 
+        rows="2" 
+        className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm transition-all" 
+        value={customer.address} 
+        onChange={e => setCustomer({...customer, address: e.target.value})} 
+      />
+    </div>
+
+    {/* Remark for Combo Sets */}
+    <div className="space-y-1.5 pt-2">
+      <div className="flex items-center gap-1.5 ml-1">
+        <MessageSquare size={16} className="text-blue-600" />
+        <label className="text-sm font-bold text-slate-700">កំណត់ចំណាំសម្រាប់ទំនិញឈុត (Optional)</label>
+      </div>
+      <p className="text-[11px] text-red-500 leading-tight ml-1 italic">
+        សូមផ្តល់កំណត់ចំណាំសម្រាប់ទំនិញឈុត ពុំដូចនេះពួកយើងនឹងរៀបចំតាមជាក់ស្តែង។
+      </p>
+      <textarea 
+        placeholder="ឧទាហរណ៍៖ យកក្លិនផ្កាទាំងអស់ ឬយកក្លិនផ្កា 1 ក្លិនដើម 2" 
+        rows="2" 
+        className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm transition-all text-sm" 
+        value={customer.remark || ''} 
+        onChange={e => setCustomer({...customer, remark: e.target.value})} 
+      />
+    </div>
+  </div>
+</div>
+          // <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
+          //   <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
+          //   <div className="space-y-4">
+          //     <input type="text" placeholder="ឈ្មោះអ្នកទទួល" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
+          //     <input type="tel" placeholder="លេខទូរស័ព្ទ" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.phone} onChange={e => setCustomer({...customer, phone: e.target.value})} />
+              
+          //     <div className="space-y-3">
+          //       <div className="relative">
+          //         <MapPin className="absolute left-4 top-3 text-slate-400" size={20} />
+          //         <select className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" value={customer.province} onChange={e => setCustomer({...customer, province: e.target.value})}>
+          //           <option value="">ជ្រើសរើស ខេត្ត/ក្រុង</option>
+          //           {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+          //         </select>
+          //       </div>
+                
+          //       {/* NEW: Shipping Fee Display under dropdown */}
+          //       {customer.province && (
+          //         <div className={`flex items-center justify-between p-3 rounded-xl border animate-in fade-in slide-in-from-top-2 duration-300 ${isFreeDelivery ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'}`}>
+          //           <div className="flex items-center gap-2">
+          //             <Truck size={16} className={isFreeDelivery ? 'text-green-600' : 'text-blue-600'} />
+          //             <span className="text-xs font-bold text-slate-600">សេវាដឹកជញ្ជូន:</span>
+          //           </div>
+          //           <span className={`text-sm font-black ${isFreeDelivery ? 'text-green-600' : 'text-blue-600'}`}>
+          //             {isFreeDelivery ? 'ឥតគិតថ្លៃ (FREE)' : `${CURRENCY}${shippingFee.toFixed(2)}`}
+          //           </span>
+          //         </div>
+          //       )}
+          //     </div>
+
+          //     <textarea placeholder="អាសយដ្ឋានលម្អិត (លេខផ្ទះ, ផ្លូវ, ភូមិ...)" rows="3" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.address} onChange={e => setCustomer({...customer, address: e.target.value})} />
+          //   </div>
+          // </div>
         )}
 
         {step === 3 && (
@@ -480,19 +568,16 @@ useEffect(() => {
 
       {/* Floating Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-10 duration-500 bg-white">
+        
         <div className="mx-auto w-full border-t border-slate-100 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] py-4 px-4">
            <div className="max-w-md mx-auto space-y-4">
              {/* Dynamic Total/Shipping Breakdown */}
              {step !== 3 && (
              <div className="flex items-center justify-between px-1">
+              <FloatingInfo/>
                 <div className="flex flex-col">
                    <div className="flex items-center gap-2 mb-0.5">
                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">សរុបបណ្ដោះអាសន្ន</span>
-                     {/* {customer.province && subtotal > 0 && (
-                       <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-bold ${isFreeDelivery ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
-                         {isFreeDelivery ? 'ដឹកហ្វ្រី' : `ដឹក: ${CURRENCY}${shippingFee.toFixed(2)}`}
-                       </span>
-                     )} */}
                    </div>
                    <span className="text-3xl font-black text-blue-600 tracking-tight">
                     {subtotal > 0 ? `${CURRENCY}${subtotal.toFixed(2)}`: `${CURRENCY}0.00`}
@@ -529,7 +614,6 @@ useEffect(() => {
                     </>
                   )}
                 </button>
-                //  <button onClick={sendToWhatsApp} disabled={subtotal == 0 || isSubmitting ? true: false} className="flex w-full items-center justify-center gap-3 rounded-2xl bg-green-500 py-5 text-lg font-black text-white shadow-xl shadow-green-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all"><Send size={20} />បញ្ជាក់ការកម្ម៉ង់</button>
                )}
              </div>
            </div>

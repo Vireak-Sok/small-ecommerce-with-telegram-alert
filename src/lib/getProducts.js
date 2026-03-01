@@ -12,7 +12,7 @@ export async function getProducts() {
   const sheets = google.sheets({ version: 'v4', auth });
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
-    range: 'Sheet1!A:I', 
+    range: 'Products!A:I', 
   });
 
   const [headers, ...rows] = response.data.values;

@@ -1,6 +1,8 @@
-export async function POST(req) {;
-
+export async function POST(req) {
   // 1. Check Env Vars first
+  // for Development
+  // if (!process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN || !process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID) {
+  // for Production
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     return Response.json({ error: "Server environment variables missing" }, { status: 500 });
   }
@@ -19,6 +21,9 @@ export async function POST(req) {;
     const endpoint = file ? "sendPhoto" : "sendMessage";
 
     const telegramForm = new FormData();
+    // for Development
+    // telegramForm.append("chat_id", process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID);
+    // for Production
     telegramForm.append("chat_id", process.env.TELEGRAM_CHAT_ID);
 
     if (file) {
@@ -31,6 +36,9 @@ export async function POST(req) {;
     }
     
     const response = await fetch(
+      // for Development
+      // `https://api.telegram.org/bot${process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN}/${endpoint}`,
+      // for Production
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${endpoint}`,
       {
         method: "POST",
