@@ -83,11 +83,10 @@ const PROVINCES = [
 
 const BUSINESS_PHONE = "1234567890";
 const STORE_NAME = "72 SHOES";
-const CURRENCY = "$";
+const CURRENCY = " KHR";
 
 export default async function App() {
   const products = await getProducts(); // This runs on the server (Safe)
-  const types = [...new Set(products.map(p => p.type))];
 
   const MAIN_PRODUCTS = products.filter(p => p.type === 'base');
   const ADDITIONAL_PRODUCTS = products.filter(p => p.type === 'add-on');

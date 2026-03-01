@@ -14,7 +14,7 @@ export async function POST(req) {
       items: body.items, // Array of products
       remark: body.remark,
       total: body.total,
-      paymentMethod: body.payment,
+        paymentMethod: body.paymentMethod, // New field for payment method
     };
 
     const response = await fetch(GOOGLE_SCRIPT_URL, {

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingCart, CheckCircle, Package, User, MapPin, ArrowLeft, CreditCard, Banknote, Truck, Gift, Sparkles, X, CloudDownload, ImageUp, Loader2, CircleX, MessageSquare } from 'lucide-react';
+import { ShoppingCart, CheckCircle, Package, User, MapPin, ArrowLeft, CreditCard, Banknote, Truck, Gift, Sparkles, X, CloudDownload, ImageUp, Loader2, CircleX, MessageSquare, Trash2 } from 'lucide-react';
 import qrImage from '../assets/image.png';
+import logo from '../assets/logo.png';
 import Image from 'next/image'; 
 import FloatingInfo from './FloatingInfo';
 
 export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PRODUCTS, COMBOS, PROVINCES, BUSINESS_PHONE, STORE_NAME, CURRENCY }) {
-    const [cart, setCart] = useState({});
+  const [cart, setCart] = useState({});
   const [step, setStep] = useState(1); 
   const [activeTab, setActiveTab] = useState('combos'); 
   const [customer, setCustomer] = useState({ name: '', phone: '', province: '', address: '' });
@@ -22,7 +23,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
 
   let shippingFee = 0;
   if (customer.province !== "" && !isFreeDelivery) {
-    shippingFee = (customer.province === "ភ្នំពេញ" || customer.province === "Phnom Penh") ? 1.50 : 2.00;
+    shippingFee = (customer.province === "ភ្នំពេញ" || customer.province === "Phnom Penh") ? 6000 : 8000;
   }
 
   const [file, setFile] = useState(null);
@@ -30,8 +31,6 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState(null);
   const [timeLeft, setTimeLeft] = useState(5);
-  const [isRecording, setIsRecording] = useState(false);
- 
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -83,7 +82,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
 
   const subtotal = Object.entries(cart).reduce((sum, [id, qty]) => {
     const item = getItemData(id);
-    return sum + (item.priceUSD * qty);
+    return sum + (item.priceKHR * qty);
   }, 0);
 
   const total = subtotal + shippingFee;
@@ -102,9 +101,9 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
       </div>
       <div className="flex-1">
         <h3 className="font-bold text-slate-800 leading-tight text-sm">{item.name}</h3>
-        <p className="text-[10px] text-slate-500 line-clamp-1">{item.desc}</p>
-        {item.free && <p className="text-[10px] font-bold text-green-600 mt-0.5">🎁 {item.free}</p>}
-        <p className="font-black text-blue-600 mt-1">{CURRENCY}{item.priceUSD.toFixed(2)}</p>
+        <p className="text-[10px] text-slate-500 line-clamp-1">{item.description}</p>
+        {item.freeItems && <p className="text-[10px] font-bold text-green-600 mt-0.5">🎁 {item.freeItems}</p>}
+        <p className="font-bold text-blue-600 mt-1">{item.priceKHR.toLocaleString()}<span className="text-sm font-normal">{CURRENCY}</span></p>
       </div>
       <div className="flex items-center gap-2 rounded-xl bg-white/50 border border-slate-100 p-1 shadow-inner">
         <button onClick={() => updateQty(item.id, -1)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm font-bold active:scale-90">-</button>
@@ -122,23 +121,22 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
         {status === 'success' ? (
           <div className="text-center">
             <CheckCircle className="text-green-600 mx-auto" size={48} />
-            <h2 className="text-xl font-bold text-center text-green-600">Order was successfully placed!</h2>
-            <p className="text-slate-600">🙏 Thank you for your order 🙏</p>
-            <p className="text-slate-400 text-sm">Back to product page in {timeLeft}s</p>
+            <h2 className="text-xl font-bold text-center text-green-600">ការបញ្ជាទិញបានជោគជ័យ!</h2>
+            <p className="text-slate-600">🙏 អរគុណសម្រាប់ការគាំទ្រ 🙏</p>
+            <p className="text-slate-400 text-sm">ត្រលប់ទៅទំព័រដើមវិញក្នុងរយះពេល {timeLeft}វិនាទី</p>
           </div>
         ) : (
           <>
             <CircleX className="text-red-600 mx-auto" size={48} />
-            <h2 className="text-xl font-bold text-center text-red-600">Order was not placed!</h2>
-            <p className="text-slate-600">Please try again in a few minutes.</p>
-            <p className="text-slate-400 text-sm">Back to product page in {timeLeft}s</p>
+            <h2 className="text-xl font-bold text-center text-red-600">ការបញ្ជាទិញមិនបានជោគជ័យ!</h2>
+            <p className="text-slate-600">សូមព្យាយាមម្តងទៀតពេលក្រោយ</p>
+            <p className="text-slate-400 text-sm">ត្រលប់ទៅទំព័រដើមវិញក្នុងរយះពេល {timeLeft}វិនាទី</p>
           </>
         )}
       </div>
     </div>
   )
 };
-
 
   const DownloadImage = ({ imageUrl, imageName }) => {
   return (
@@ -157,22 +155,7 @@ export default function ClientShell({ MAIN_PRODUCTS, ADDITIONAL_PRODUCTS, ALL_PR
   );
 };
 
-const RecordFailed = () => {
-  return(
-      <div className="fixed h-full inset-0 z-[100] flex items-center justify-center bg-black/50">
-      {/* Modal Box */}
-      <div className="bg-white p-8 rounded-lg shadow-xl flex flex-col items-center gap-2">
-          <CircleX className="text-red-600 mx-auto" size={48} />
-          <h2 className="text-xl font-bold text-center text-red-600">Cannot record order!</h2>
-          <p className="text-slate-600">Please try again in a few minutes.</p>
-          <p className="text-slate-400 text-sm">Back to product page in {timeLeft}s</p>
-      </div>
-    </div>
-  )
-}
-
 const recordOrder = async () => {
-  setIsRecording(true);
   const timestamp = new Date().toLocaleString();
 
   try {
@@ -183,29 +166,20 @@ const recordOrder = async () => {
         date: timestamp,
         ...customer,
         items: Object.entries(cart).map(([id, qty]) => `${getItemData(id)?.name} x${qty}`).join(', '),
-        total: total, // Your calculated total
-        payment: paymentMethod
+        total: total,
+        paymentMethod: paymentMethod,
       }),
     });
 
     const data = await res.json();
 
     if (data.success) {
-      setIsRecording(false);
-      setStatus('success');
-      handleNext(); // Move to next step (e.g., show success message)
-      // Redirect to thank you page or clear cart
+      return true;
     } else {
-      setIsRecording(false);
-      setStatus('error');
+      return false;
     }
   } catch (err) {
-    setIsRecording(false);
-    setStatus('error');
-  } finally {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    setStep(1);
-    setStatus(null);
+    return false;
   }
 };
 
@@ -251,6 +225,7 @@ const recordOrder = async () => {
     setIsSubmitting(true);
 
     try {
+      await recordOrder();
       await sendToTelegram();
       setStatus('success');
     } catch (err) {
@@ -290,11 +265,9 @@ useEffect(() => {
           <button onClick={() => setStep(step - 1)} className={`p-1 hover:bg-slate-100 rounded-full transition-colors ${step > 1 ? '' : 'invisible'}`}>
             <ArrowLeft size={24}/>
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <h1 className="text-xl font-black tracking-tighter text-blue-600">{STORE_NAME}</h1>
-            <div className="h-10 w-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-100">
-              <Sparkles className="text-white" size={20} />
-            </div>
+            <Image src={logo} alt="Logo" className="h-10 w-10 rounded-full"/>
           </div>
         </div>
       </header>
@@ -329,7 +302,7 @@ useEffect(() => {
                         </div>
                         <div>
                           <p className="text-xs font-black text-slate-800 leading-tight">{item.name}</p>
-                          <p className="text-[10px] font-bold text-blue-600">{CURRENCY}{item.priceUSD.toFixed(2)} x {qty}</p>
+                          <p className="text-[10px] font-bold text-blue-600">{item.priceKHR.toLocaleString()}<span className="font-normal">{CURRENCY}</span> </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -345,14 +318,26 @@ useEffect(() => {
             <div className="p-5 bg-slate-50 border-t space-y-4">
               <div className="flex justify-between items-center">
                  <span className="font-bold text-slate-500">សរុបបណ្ដោះអាសន្ន</span>
-                 <span className="text-xl font-black text-blue-600">{CURRENCY}{subtotal.toFixed(2)}</span>
+                 <span className="text-xl font-bold text-blue-600">{subtotal.toLocaleString()}<span className="text-sm font-normal">{CURRENCY}</span></span>
               </div>
+              <div className="flex justify-between items-center gap-2">
+              <button
+                onClick={() => {
+                  setCart({});
+                  setSubtotal(0);
+                }}
+                className={`py-2 px-3 text-red-600 rounded-xl font-black shadow-lg border border-red-600 transition-all hover:bg-red-100 active:scale-95 ${subtotal === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={subtotal === 0}
+              >
+                <Trash2 size={20} className="inline-block" />
+              </button>
               <button 
                 onClick={() => setIsCartOpen(false)}
                 className="w-full py-2 bg-blue-600 text-white rounded-xl font-black shadow-lg shadow-blue-100 active:scale-95 transition-all"
               >
                 បិទវិញ
               </button>
+              </div>
             </div>
           </div>
         </div>
@@ -388,7 +373,7 @@ useEffect(() => {
                       <Gift className={isFreeDelivery ? 'animate-bounce' : ''} size={24} />
                       <div>
                         <p className="font-bold text-sm leading-tight">{isFreeDelivery ? 'ទទួលបានការដឹកជញ្ជូនឥតគិតថ្លៃ!' : 'ប្រូម៉ូសិនពិសេស!'}</p>
-                        <p className="text-[10px] opacity-90 mt-0.5">{isFreeDelivery ? 'អ្នកបានកម្ម៉ង់ ២ឈុត ឬលើសពីនេះ។ យើងដឹកឱ្យហ្វ្រី!' : 'កម្ម៉ង់ឈុតប្រូម៉ូសិនណាក៏បាន ២ឈុត នឹងទទួលបានការដឹកជញ្ជូនឥតគិតថ្លៃ!'}</p>
+                        <p className="text-[10px] opacity-90 mt-0.5">{isFreeDelivery ? '' : 'កម្ម៉ង់ 2 ឈុតឡើងទៅ ដើម្បីទទួលបានការដឹកជញ្ជូនឥតគិតថ្លៃ!'}</p>
                       </div>
                     </div>
                     {COMBOS.map(combo => <ProductCard key={combo.id} item={combo} isCombo={true} />)}
@@ -410,7 +395,6 @@ useEffect(() => {
 
         {step === 2 && (
           <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
-            {status === 'error' && <RecordFailed />}
   <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
   
   <div className="space-y-4">
@@ -428,7 +412,7 @@ useEffect(() => {
 
     {/* Phone Number */}
     <div className="space-y-1.5">
-      <label className="text-sm font-bold text-slate-700 ml-1">លេខទូរស័ព្ទ</label>
+      <label className="text-sm font-bold text-slate-700 ml-1">លេខទូរសព្ទ</label>
       <input 
         type="tel" 
         placeholder="ឧទាហរណ៍៖ 012 345 678" 
@@ -442,7 +426,7 @@ useEffect(() => {
     <div className="space-y-1.5">
       <label className="text-sm font-bold text-slate-700 ml-1">ខេត្ត/ក្រុង</label>
       <div className="relative">
-        <MapPin className="absolute left-4 top-2.5 text-slate-400" size={18} />
+        <MapPin className="absolute left-4 top-3 text-slate-400" size={18} />
         <select 
           className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" 
           value={customer.province} 
@@ -460,8 +444,12 @@ useEffect(() => {
             <Truck size={16} className={isFreeDelivery ? 'text-green-600' : 'text-blue-600'} />
             <span className="text-xs font-bold text-slate-600">សេវាដឹកជញ្ជូន:</span>
           </div>
-          <span className={`text-sm font-black ${isFreeDelivery ? 'text-green-600' : 'text-blue-600'}`}>
-            {isFreeDelivery ? 'ឥតគិតថ្លៃ (FREE)' : `${CURRENCY}${shippingFee.toFixed(2)}`}
+          <span className={`text-sm font-bold ${isFreeDelivery ? 'text-green-600' : 'text-blue-600'}`}>
+            {isFreeDelivery ? (
+              <>ឥតគិតថ្លៃ (FREE)</>
+            ) : (
+            <>{shippingFee.toLocaleString()}<span className="text-sm font-normal">{CURRENCY}</span></>)
+            }
           </span>
         </div>
       )}
@@ -483,7 +471,7 @@ useEffect(() => {
     <div className="space-y-1.5 pt-2">
       <div className="flex items-center gap-1.5 ml-1">
         <MessageSquare size={16} className="text-blue-600" />
-        <label className="text-sm font-bold text-slate-700">កំណត់ចំណាំសម្រាប់ទំនិញឈុត (Optional)</label>
+        <label className="text-sm font-bold text-slate-700">កំណត់ចំណាំសម្រាប់ទំនិញឈុត (មិនចាំបាច់)</label>
       </div>
       <p className="text-[11px] text-red-500 leading-tight ml-1 italic">
         សូមផ្តល់កំណត់ចំណាំសម្រាប់ទំនិញឈុត ពុំដូចនេះពួកយើងនឹងរៀបចំតាមជាក់ស្តែង។
@@ -551,15 +539,39 @@ useEffect(() => {
                 <span className="flex items-center justify-center gap-2">
                   <button 
                      onClick={() => setIsCartOpen(true)}
-                     className="bg-blue-50 text-blue-600 text-[10px] font-black px-4 py-2 rounded-full flex items-center gap-2 border border-blue-100 active:scale-90 transition-transform"
+                     className="bg-blue-50 text-blue-600 text-sm font-black px-4 py-1 rounded-full flex items-center gap-2 border border-blue-100 active:scale-90 transition-transform"
                    >
-                      មើលមុខទំនិញ
+                      <ShoppingCart size={16} />
                   </button>
-                  {CURRENCY}{subtotal.toFixed(2)}
+                  <p>{subtotal.toLocaleString()}<span className="text-sm font-normal">{CURRENCY}</span></p>
                 </span>
                 </div>
-               <div className="flex justify-between text-md text-slate-500 font-medium"><span>ថ្លៃដឹកជញ្ជូន ({customer.province})</span><span className={isFreeDelivery ? "text-green-600 font-black" : ""}>{isFreeDelivery ? "ឥតគិតថ្លៃ" : `${CURRENCY}${shippingFee.toFixed(2)}`}</span></div>
-               <div className="flex justify-between font-black text-xl border-t border-dashed pt-3 mt-3"><span>ទឹកប្រាក់ត្រូវបង់</span><span className="text-blue-600">{CURRENCY}{total.toFixed(2)}</span></div>
+               <div className="flex justify-between text-md text-slate-500 font-medium">
+                <span>ថ្លៃដឹកជញ្ជូន ({customer.province})</span>
+                <span className={isFreeDelivery ? "text-green-600 font-black" : ""}>
+                  {isFreeDelivery ? (
+                      <>
+                      ឥតគិតថ្លៃ
+                      </>
+                    ) : (
+                      <>
+                      {shippingFee.toLocaleString()}<span className="text-sm font-normal">{CURRENCY}</span>
+                      </>
+                    )}
+                  </span>
+              </div>
+               <div className="flex justify-between font-bold text-xl border-t border-dashed pt-3 mt-3">
+                <span>ទឹកប្រាក់ត្រូវបង់</span>
+                <span className="text-blue-600 ">
+                  {total.toLocaleString()}
+                  <span className="text-sm font-normal">
+                    {CURRENCY}
+                  </span>
+                  <span className="text-sm font-italic font-light text-slate-400 flex flex-col items-end">
+                    ≈ {(total/4000).toFixed(2)} USD
+                  </span>
+                </span>
+              </div>
             </div>
 
             {paymentMethod === 'QR' && (
@@ -626,10 +638,19 @@ useEffect(() => {
               <FloatingInfo/>
                 <div className="flex flex-col">
                    <div className="flex items-center gap-2 mb-0.5">
-                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">សរុបបណ្ដោះអាសន្ន</span>
+                     <span className="text-sm font-black text-slate-400 uppercase tracking-widest leading-none">សរុបបណ្ដោះអាសន្ន</span>
                    </div>
-                   <span className="text-3xl font-black text-blue-600 tracking-tight">
-                    {subtotal > 0 ? `${CURRENCY}${subtotal.toFixed(2)}`: `${CURRENCY}0.00`}
+                   <span className="text-2xl font-bold text-blue-600 tracking-tight">
+                    {subtotal > 0 ? (
+                      <>
+                      {subtotal.toLocaleString()}<span className="text-sm font-normal">{CURRENCY}</span>
+                      </>
+                    ):(
+                      <>
+                      0 <span className="text-sm font-normal">{CURRENCY}</span>
+                      </>
+                    )
+                  }
                     </span>
                 </div>
                 {subtotal > 0 && (
@@ -645,19 +666,9 @@ useEffect(() => {
               )}
 
              <div>
-               {step === 1 ? (
+               {step < 3 ? (
                  <button onClick={handleNext} disabled={step === 1 || subtotal == 0 ? subtotal === 0 : (!customer.name || !customer.phone || !customer.province || !customer.address)} className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-2 text-lg font-black text-white shadow-xl shadow-blue-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all">
-                   បន្តទៅកាន់ការដឹកជញ្ជូន
-                 </button>
-               ) : step === 2 ? (
-                <button onClick={recordOrder} disabled={step === 1 || subtotal == 0 ? subtotal === 0 : (!customer.name || !customer.phone || !customer.province || !customer.address)} className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-2 text-lg font-black text-white shadow-xl shadow-blue-200 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all">
-                   {isRecording ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      បន្តទៅកាន់ការបង់ប្រាក់
-                    </>
-                  )}
+                   {step === 1 ? "បន្តទៅកាន់ការដឹកជញ្ជូន" : "បន្តទៅកាន់ការបង់ប្រាក់"}
                  </button>
                ) : (
                 <button 
