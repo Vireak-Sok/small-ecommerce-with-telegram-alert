@@ -486,6 +486,7 @@ useEffect(() => {
     </div>
   </div>
 </div>
+)}
 
         {step === 3 && (
           <div className="space-y-6 animate-in zoom-in-95 duration-500 pb-10">
