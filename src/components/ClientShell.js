@@ -199,8 +199,8 @@ const recordOrder = async () => {
     <b>Product: ${Object.entries(cart).map(([id, qty]) => `${getItemData(id)?.name} x${qty}`).join(', ')}</b>
     <b>Remark: ${customer.remark || 'None'}</b>
 
-    <b>Total amount: $${total.toFixed(2)}</b>
-    <b>Shipping fee: $${shippingFee.toFixed(2)}</b>
+    <b>Total amount: ៛${subtotal.toLocaleString()}</b>
+    <b>Shipping fee: ៛${shippingFee.toLocaleString()}</b>
     <b>Payment Method: ${paymentMethod}</b>`;
 
     const formData = new FormData();
