@@ -400,7 +400,7 @@ useEffect(() => {
   <div className="space-y-4">
     {/* Recipient Name */}
     <div className="space-y-1.5">
-      <label className="text-sm font-bold text-slate-700 ml-1">ឈ្មោះអ្នកទទួល</label>
+      <label className="text-sm font-bold text-slate-700 ml-1">ឈ្មោះអ្នកទទួល <span className="text-red-500 ml-0.5" aria-hidden="true"> *</span></label>
       <input 
         type="text" 
         placeholder="បញ្ចូលឈ្មោះរបស់អ្នក" 
@@ -412,7 +412,7 @@ useEffect(() => {
 
     {/* Phone Number */}
     <div className="space-y-1.5">
-      <label className="text-sm font-bold text-slate-700 ml-1">លេខទូរសព្ទ</label>
+      <label className="text-sm font-bold text-slate-700 ml-1">លេខទូរសព្ទ <span className="text-red-500 ml-0.5" aria-hidden="true"> *</span></label>
       <input 
         type="tel" 
         placeholder="ឧទាហរណ៍៖ 012 345 678" 
@@ -424,7 +424,7 @@ useEffect(() => {
     
     {/* Province Selection */}
     <div className="space-y-1.5">
-      <label className="text-sm font-bold text-slate-700 ml-1">ខេត្ត/ក្រុង</label>
+      <label className="text-sm font-bold text-slate-700 ml-1">ខេត្ត/ក្រុង <span className="text-red-500 ml-0.5" aria-hidden="true"> *</span></label>
       <div className="relative">
         <MapPin className="absolute left-4 top-3 text-slate-400" size={18} />
         <select 
@@ -457,7 +457,7 @@ useEffect(() => {
 
     {/* Detailed Address */}
     <div className="space-y-1.5">
-      <label className="text-sm font-bold text-slate-700 ml-1">អាសយដ្ឋានលម្អិត</label>
+      <label className="text-sm font-bold text-slate-700 ml-1">អាសយដ្ឋានលម្អិត <span className="text-red-500 ml-0.5" aria-hidden="true"> *</span></label>
       <textarea 
         placeholder="លេខផ្ទះ, ផ្លូវ, ភូមិ..." 
         rows="2" 
@@ -473,7 +473,7 @@ useEffect(() => {
         <MessageSquare size={16} className="text-blue-600" />
         <label className="text-sm font-bold text-slate-700">កំណត់ចំណាំសម្រាប់ទំនិញឈុត (មិនចាំបាច់)</label>
       </div>
-      <p className="text-[11px] text-red-500 leading-tight ml-1 italic">
+      <p className="text-[11px] text-blue-400 leading-tight ml-1 italic">
         សូមផ្តល់កំណត់ចំណាំសម្រាប់ទំនិញឈុត ពុំដូចនេះពួកយើងនឹងរៀបចំតាមជាក់ស្តែង។
       </p>
       <textarea 
