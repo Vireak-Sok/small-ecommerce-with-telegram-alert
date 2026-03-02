@@ -399,7 +399,7 @@ useEffect(() => {
   
   <div className="space-y-4">
     {/* Recipient Name */}
-    <div className="space-y-2">
+    <div className="space-y-4">
       <label className="text-sm font-bold text-slate-700 ml-1">ឈ្មោះអ្នកទទួល <span className="text-red-500 ml-0.5" aria-hidden="true"> *</span></label>
       <input 
         type="text" 
@@ -486,39 +486,6 @@ useEffect(() => {
     </div>
   </div>
 </div>
-          // <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
-          //   <h2 className="text-2xl font-extrabold tracking-tight text-center">ព័ត៌មានដឹកជញ្ជូន</h2>
-          //   <div className="space-y-4">
-          //     <input type="text" placeholder="ឈ្មោះអ្នកទទួល" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.name} onChange={e => setCustomer({...customer, name: e.target.value})} />
-          //     <input type="tel" placeholder="លេខទូរស័ព្ទ" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.phone} onChange={e => setCustomer({...customer, phone: e.target.value})} />
-              
-          //     <div className="space-y-3">
-          //       <div className="relative">
-          //         <MapPin className="absolute left-4 top-3 text-slate-400" size={20} />
-          //         <select className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-12 pr-4 outline-none ring-blue-600 focus:ring-2 appearance-none shadow-sm font-medium" value={customer.province} onChange={e => setCustomer({...customer, province: e.target.value})}>
-          //           <option value="">ជ្រើសរើស ខេត្ត/ក្រុង</option>
-          //           {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-          //         </select>
-          //       </div>
-                
-          //       {/* NEW: Shipping Fee Display under dropdown */}
-          //       {customer.province && (
-          //         <div className={`flex items-center justify-between p-3 rounded-xl border animate-in fade-in slide-in-from-top-2 duration-300 ${isFreeDelivery ? 'bg-green-50 border-green-100' : 'bg-blue-50 border-blue-100'}`}>
-          //           <div className="flex items-center gap-2">
-          //             <Truck size={16} className={isFreeDelivery ? 'text-green-600' : 'text-blue-600'} />
-          //             <span className="text-xs font-bold text-slate-600">សេវាដឹកជញ្ជូន:</span>
-          //           </div>
-          //           <span className={`text-sm font-black ${isFreeDelivery ? 'text-green-600' : 'text-blue-600'}`}>
-          //             {isFreeDelivery ? 'ឥតគិតថ្លៃ (FREE)' : `${CURRENCY}${shippingFee.toFixed(2)}`}
-          //           </span>
-          //         </div>
-          //       )}
-          //     </div>
-
-          //     <textarea placeholder="អាសយដ្ឋានលម្អិត (លេខផ្ទះ, ផ្លូវ, ភូមិ...)" rows="3" className="w-full rounded-xl border border-slate-200 py-2 px-4 outline-none ring-blue-600 focus:ring-2 bg-white shadow-sm" value={customer.address} onChange={e => setCustomer({...customer, address: e.target.value})} />
-          //   </div>
-          // </div>
-        )}
 
         {step === 3 && (
           <div className="space-y-6 animate-in zoom-in-95 duration-500 pb-10">
